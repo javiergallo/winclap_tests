@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
 import json
-import sys
-
 
 ALL = None
+METHUSELAH_AGE = 969  # xD
 
 
 def evaluate_string(user_value, campaing_value):
@@ -13,7 +12,8 @@ def evaluate_string(user_value, campaing_value):
 
 
 class Campaign(object):
-    def __init__(self, cid, name, gender=ALL, min_age=0, max_age=sys.maxsize,
+    def __init__(self, cid, name, gender=ALL,
+                 min_age=0, max_age=METHUSELAH_AGE,
                  platform=ALL, connection=ALL):
         self.cid = cid
         self.name = name
@@ -24,15 +24,18 @@ class Campaign(object):
         self.connection = connection
 
     def evaluate_age(self, age):
-        age_avg = (self.max_age + self.min_age) / 2
+        age_avg = (self.max_age + self.min_age) / 2.0
         age_dev = age_avg - self.min_age
-        return max(0, 1 - abs(age - age_avg)/age_dev)
+        return max(0.0, 1.0 - abs(age - age_avg) / age_dev)
 
-    def evaluate_user(self, user):
-        return (0.2 * self.evaluate_age(user.age) +
-                0.3 * evaluate_string(user.gender, self.gender) +
-                0.25 * evaluate_string(user.platform, self.platform) +
-                0.25 * evaluate_string(user.connection, self.connection))
+    def evaluate_gender(self, gender):
+        return evaluate_string(gender, self.gender)
+
+    def evaluate_platform(self, platform):
+        return evaluate_string(platform, self.platform)
+
+    def evaluate_connection(self, connection):
+        return evaluate_string(connection, self.connection)
 
     def __repr__(self):
         return '<{class_name}({cid}, {name})>'.format(
@@ -52,9 +55,15 @@ class User(object):
 
     def fits_campaign(self, campaign):
         return (campaign.min_age <= self.age <= campaign.max_age and
-                evaluate_string(self.gender, campaign.gender) and
-                evaluate_string(self.platform, campaign.platform) and
-                evaluate_string(self.connection, campaign.connection))
+                campaign.evaluate_gender(self.gender) and
+                campaign.evaluate_platform(self.platform) and
+                campaign.evaluate_connection(self.connection))
+
+    def evaluate_fitness(self, campaign):
+        return (0.2 * campaign.evaluate_age(self.age) +
+                0.3 * campaign.evaluate_gender(self.gender) +
+                0.25 * campaign.evaluate_platform(self.platform) +
+                0.25 * campaign.evaluate_connection(self.connection))
 
 
 class Classifier(object):
@@ -82,7 +91,7 @@ class Classifier(object):
     def get_best_campaign(self):
         return max(
             self.fitting_campaigns,
-            key=lambda campaign: campaign.evaluate_user(self.user)
+            key=lambda campaign: self.user.evaluate_fitness(campaign)
         )
 
 
@@ -108,6 +117,7 @@ def load_campaigns(filename):
         campaigns.append(Campaign(**kwargs))
     return campaigns
 
+
 def load_user(filename):
     with open(filename) as handler:
         data = json.load(handler)
@@ -122,13 +132,11 @@ classifier = Classifier(user, campaigns)
 
 if classifier.fitting_campaigns:
     print('Fitting campaigns:')
-    for fitting_campaign in classifier.fitting_campaigns:
-        print('   ', fitting_campaign, '- fitness:', fitting_campaign.evaluate_user(user))
+    for campaign in classifier.fitting_campaigns:
+        print('   ', campaign, '- fitness:', user.evaluate_fitness(campaign))
 
     print()
 
     print('Best campaign:', classifier.get_best_campaign())
 else:
     print('User does not fit any campaign')
-
-
