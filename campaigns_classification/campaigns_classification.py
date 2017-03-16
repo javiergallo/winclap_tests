@@ -5,9 +5,9 @@ ALL = None
 METHUSELAH_AGE = 969  # xD
 
 
-def evaluate_string(user_value, campaing_value):
-    return (0.75 if campaing_value == ALL else
-            1.0 if user_value.lower() == campaing_value.lower() else
+def evaluate_string(actual_value, expected_value):
+    return (0.75 if expected_value == ALL else
+            1.0 if actual_value.lower() == expected_value.lower() else
             0.0)
 
 
