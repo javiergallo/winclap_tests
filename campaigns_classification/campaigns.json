@@ -1,0 +1,56 @@
+[
+   {
+      "id":1,
+      "name":"Uber",
+      "gender":"All",
+      "min_age":16,
+      "max_age":45,
+      "platform":"Android",
+      "connection":"All"
+   },
+   {
+      "id":2,
+      "name":"Pokemon Go",
+      "gender":"Male",
+      "min_age":15,
+      "max_age":18,
+      "platform":"Android",
+      "connection":"Mobile data"
+   },
+   {
+      "id":3,
+      "name":"Spotify",
+      "gender":"All",
+      "min_age":null,
+      "max_age":null,
+      "platform":"iOS",
+      "connection":"All"
+   },
+   {
+      "id":4,
+      "name":"Sweet Selfie",
+      "gender":"Female",
+      "min_age":12,
+      "max_age":30,
+      "platform":"Android",
+      "connection":"WiFi"
+   },
+   {
+      "id":5,
+      "name":"Sweet Selfie",
+      "gender":"Female",
+      "min_age":12,
+      "max_age":30,
+      "platform":"iOS",
+      "connection":"WiFi"
+   },
+   {
+      "id":6,
+      "name":"OLX",
+      "gender":"All",
+      "min_age":18,
+      "max_age":null,
+      "platform":"iOS",
+      "connection":"All"
+   }
+]
