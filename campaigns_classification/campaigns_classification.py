@@ -59,15 +59,26 @@ class User(object):
                 campaign.evaluate_platform(self.platform) and
                 campaign.evaluate_connection(self.connection))
 
-    def evaluate_fitness(self, campaign):
-        return (0.2 * campaign.evaluate_age(self.age) +
-                0.3 * campaign.evaluate_gender(self.gender) +
-                0.25 * campaign.evaluate_platform(self.platform) +
-                0.25 * campaign.evaluate_connection(self.connection))
+    def evaluate_fitness(self, campaign, weights):
+        w = weights
+        return (
+            w['age'] * campaign.evaluate_age(self.age) +
+            w['gender'] * campaign.evaluate_gender(self.gender) +
+            w['platform'] * campaign.evaluate_platform(self.platform) +
+            w['connection'] * campaign.evaluate_connection(self.connection)
+        )
 
 
 class Classifier(object):
+    WEIGHTS = {
+        'age': 0.2,
+        'gender': 0.3,
+        'platform': 0.25,
+        'connection': 0.25
+    }
+
     _fitting_campaigns = None
+    _fitness_data = None
 
     def __init__(self, user, campaigns):
         self._user = user
@@ -88,10 +99,19 @@ class Classifier(object):
                                        if self.user.fits_campaign(campaign)]
         return self._fitting_campaigns
 
+    @property
+    def fitness_data(self):
+        if self._fitness_data is None:
+            self._fitness_data = {
+                campaign: self.user.evaluate_fitness(campaign, self.WEIGHTS)
+                for campaign in self.fitting_campaigns
+            }
+        return self._fitness_data
+
     def get_best_campaign(self):
         return max(
             self.fitting_campaigns,
-            key=lambda campaign: self.user.evaluate_fitness(campaign)
+            key=lambda campaign: self.fitness_data[campaign]
         )
 
 
@@ -130,10 +150,11 @@ campaigns = load_campaigns('campaigns.json')
 
 classifier = Classifier(user, campaigns)
 
-if classifier.fitting_campaigns:
+if classifier.fitness_data:
     print('Fitting campaigns:')
-    for campaign in classifier.fitting_campaigns:
-        print('   ', campaign, '- fitness:', user.evaluate_fitness(campaign))
+    for campaign, fitness in classifier.fitness_data.items():
+        print('   {campaign} - fitness: {fitness}'.format(campaign=campaign,
+                                                          fitness=fitness))
 
     print()
 
