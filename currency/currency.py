@@ -45,13 +45,6 @@ class Campaign(object):
                                 self.currency_code,
                                 currency_code)
 
-    def __repr__(self):
-        return '<{class_name}({cid}, {name})>'.format(
-            class_name=type(self).__name__,
-            cid=self.cid,
-            name=self.name
-        )
-
 
 def load_campaigns(filename):
     campaigns = []
