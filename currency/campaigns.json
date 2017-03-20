@@ -1,0 +1,42 @@
+[
+   {
+      "id":1,
+      "name":"Uber",
+      "cost":10,
+      "revenue":15,
+      "currency":"ARS",
+      "conversions":150
+   },
+   {
+      "id":2,
+      "name":"Pokemon Go",
+      "cost":2.5,
+      "revenue":5.75,
+      "currency":"AED",
+      "conversions":225
+   },
+   {
+      "id":3,
+      "name":"Pokemon Go",
+      "cost":3.5,
+      "revenue":3.75,
+      "currency":"AED",
+      "conversions":25
+   },
+   {
+      "id":4,
+      "name":"Spotify",
+      "cost":3.05,
+      "revenue":10.10,
+      "currency":"BRL",
+      "conversions":32
+   },
+   {
+      "id":5,
+      "name":"Spotify",
+      "cost":4.05,
+      "revenue":6.10,
+      "currency":"CNH",
+      "conversions":225
+   }
+]
